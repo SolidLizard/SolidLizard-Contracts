@@ -37,12 +37,14 @@ contract LizardPair is IERC20, IPair, Reentrancy {
   uint public immutable chainId;
 
   uint internal constant MINIMUM_LIQUIDITY = 10 ** 3;
-  /// @dev 0.01% swap fee
-  uint internal constant SWAP_FEE_STABLE = 10_000;
-  /// @dev 0.05% swap fee
-  uint internal constant SWAP_FEE_VOLATILE = 2_000;
-  /// @dev 0.1% max allowed swap fee
-  uint internal constant SWAP_FEE_MAX = 1_000;
+  /// @dev 0.02% swap fee
+  uint internal constant SWAP_FEE_STABLE = 5_000;
+  /// @dev 0.4% swap fee
+  uint internal constant SWAP_FEE_VOLATILE = 250;
+  /// @dev 1% max allowed swap fee
+  uint internal constant SWAP_FEE_MAX = 100;
+   /// @dev 50% of swap fee
+  uint internal constant TREASURY_FEE = 2;
   /// @dev Capture oracle reading every 30 minutes
   uint internal constant PERIOD_SIZE = 1800;
 
@@ -51,6 +53,7 @@ contract LizardPair is IERC20, IPair, Reentrancy {
   address public immutable override token1;
   address public immutable fees;
   address public immutable factory;
+  address public immutable treasury;
 
   Observation[] public observations;
 
@@ -97,6 +100,7 @@ contract LizardPair is IERC20, IPair, Reentrancy {
 
   constructor() {
     factory = msg.sender;
+    treasury = IFactory(msg.sender).treasury();
     (address _token0, address _token1, bool _stable) = IFactory(msg.sender).getInitializable();
     (token0, token1, stable) = (_token0, _token1, _stable);
     fees = address(new PairFees(_token0, _token1));
@@ -104,10 +108,10 @@ contract LizardPair is IERC20, IPair, Reentrancy {
     swapFee = _stable ? SWAP_FEE_STABLE : SWAP_FEE_VOLATILE;
 
     if (_stable) {
-      name = string(abi.encodePacked("StableV1 AMM - ", IERC721Metadata(_token0).symbol(), "/", IERC721Metadata(_token1).symbol()));
+      name = string(abi.encodePacked("Stable AMM - ", IERC721Metadata(_token0).symbol(), "/", IERC721Metadata(_token1).symbol()));
       symbol = string(abi.encodePacked("sAMM-", IERC721Metadata(_token0).symbol(), "/", IERC721Metadata(_token1).symbol()));
     } else {
-      name = string(abi.encodePacked("VolatileV1 AMM - ", IERC721Metadata(_token0).symbol(), "/", IERC721Metadata(_token1).symbol()));
+      name = string(abi.encodePacked("Volatile AMM - ", IERC721Metadata(_token0).symbol(), "/", IERC721Metadata(_token1).symbol()));
       symbol = string(abi.encodePacked("vAMM-", IERC721Metadata(_token0).symbol(), "/", IERC721Metadata(_token1).symbol()));
     }
 
@@ -178,24 +182,36 @@ contract LizardPair is IERC20, IPair, Reentrancy {
 
   /// @dev Accrue fees on token0
   function _update0(uint amount) internal {
-    // transfer the fees out to PairFees
-    IERC20(token0).safeTransfer(fees, amount);
+    uint toTreasury = amount / TREASURY_FEE;
+    uint toFees = amount - toTreasury;
+
+    // transfer the fees out to PairFees and Treasury
+    IERC20(token0).safeTransfer(treasury, toTreasury);
+    IERC20(token0).safeTransfer(fees, toFees);
     // 1e32 adjustment is removed during claim
-    uint _ratio = amount * _FEE_PRECISION / totalSupply;
+    uint _ratio = toFees * _FEE_PRECISION / totalSupply;
     if (_ratio > 0) {
       index0 += _ratio;
     }
-    emit Fees(msg.sender, amount, 0);
+    // keep the same structure of events for compatability
+    emit Treasury(msg.sender, toTreasury, 0);
+    emit Fees(msg.sender, toFees, 0);
   }
 
   /// @dev Accrue fees on token1
   function _update1(uint amount) internal {
-    IERC20(token1).safeTransfer(fees, amount);
-    uint _ratio = amount * _FEE_PRECISION / totalSupply;
+    uint toTreasury = amount / TREASURY_FEE;
+    uint toFees = amount - toTreasury;
+
+    IERC20(token1).safeTransfer(treasury, toTreasury);
+    IERC20(token1).safeTransfer(fees, toFees);
+    uint _ratio = toFees * _FEE_PRECISION / totalSupply;
     if (_ratio > 0) {
       index1 += _ratio;
     }
-    emit Fees(msg.sender, 0, amount);
+    // keep the same structure of events for compatability
+    emit Treasury(msg.sender, 0, toTreasury);
+    emit Fees(msg.sender, 0, toFees);
   }
 
   /// @dev This function MUST be called on any balance changes,
