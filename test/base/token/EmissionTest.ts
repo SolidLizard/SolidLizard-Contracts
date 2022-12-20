@@ -1,6 +1,6 @@
 import {
-  ConeMinter__factory,
-  ConePair,
+  LizardMinter__factory,
+  LizardPair,
   Bribe,
   Bribe__factory,
   Gauge,
@@ -41,7 +41,7 @@ describe("emission tests", function () {
   let ust: Token;
   let mim: Token;
   let dai: Token;
-  let mimUstPair: ConePair;
+  let mimUstPair: LizardPair;
 
   let gaugeMimUst: Gauge;
 
@@ -150,7 +150,7 @@ describe("emission tests", function () {
     await core.minter.updatePeriod();
 
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    // not exact amount coz veCONE balance fluctuation during time
+    // not exact amount coz veLIZARD balance fluctuation during time
     TestHelper.closer(await core.token.balanceOf(core.veDist.address), parseUnits('900000'), parseUnits('50000'));
     TestHelper.closer(await core.token.balanceOf(core.voter.address), parseUnits('2000000'), parseUnits('100000'));
   });
@@ -166,7 +166,7 @@ describe("emission tests", function () {
     await core.minter.updatePeriod();
 
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    // not exact amount coz veCONE balance fluctuation during time
+    // not exact amount coz veLIZARD balance fluctuation during time
     const veDistBal = await core.token.balanceOf(core.veDist.address);
     const voterBal = await core.token.balanceOf(core.voter.address);
     const govBal = await core.token.balanceOf(govAdr);
@@ -179,7 +179,7 @@ describe("emission tests", function () {
     await core.minter.updatePeriod();
 
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    // not exact amount coz veCONE balance fluctuation during time
+    // not exact amount coz veLIZARD balance fluctuation during time
     TestHelper.closer((await core.token.balanceOf(core.veDist.address)).sub(veDistBal), parseUnits('455'), parseUnits('50'));
     TestHelper.closer((await core.token.balanceOf(core.voter.address)).sub(voterBal), parseUnits('13500000'), parseUnits('1000000'));
     TestHelper.closer((await core.token.balanceOf(govAdr)).sub(govBal), parseUnits('680000'), parseUnits('5000'));
@@ -196,7 +196,7 @@ describe("emission tests", function () {
 
     // minter without enough token should distribute everything to veDist and voter
     expect(await core.token.balanceOf(core.minter.address)).is.eq(0);
-    // not exact amount coz veCONE balance fluctuation during time
+    // not exact amount coz veLIZARD balance fluctuation during time
     TestHelper.closer(await core.token.balanceOf(core.veDist.address), parseUnits('895000'), parseUnits('10000'));
     TestHelper.closer(await core.token.balanceOf(core.voter.address), parseUnits('1904000'), parseUnits('10000'));
 
@@ -205,18 +205,18 @@ describe("emission tests", function () {
     const toClaim = await core.veDist.claimable(1);
     expect(toClaim).is.above(parseUnits('30000'));
     await core.token.transfer(core.token.address, await core.token.balanceOf(owner.address))
-    expect(await core.token.balanceOf(owner.address)).is.eq(0, "before the first update we should have 0 Cone");
+    expect(await core.token.balanceOf(owner.address)).is.eq(0, "before the first update we should have 0 Lizard");
     const veBalance = (await core.ve.locked(1)).amount;
 
     await core.veDist.claim(1);
 
-    // claimed CONE will be deposited to veCONE
+    // claimed LIZARD will be deposited to veLIZARD
     TestHelper.closer((await core.ve.locked(1)).amount, toClaim.add(veBalance), parseUnits('10000'));
 
     // ----------- CHECK CLAIM GAUGE ----------
     expect(await core.token.balanceOf(gaugeMimUst.address)).is.eq(0);
 
-    // distribute CONE to all gauges
+    // distribute LIZARD to all gauges
     await core.voter.distributeAll();
 
     // voter has some dust after distribution
@@ -298,12 +298,12 @@ async function emissionLoop(
     const tx = await gauge.getReward(owner.address, [core.token.address]);
     const receipt = await tx.wait(1);
     // tslint:disable-next-line
-    const log = receipt.events?.find((l: any) => l.topics[0] === ConeMinter__factory.createInterface().getEventTopic('Mint'));
+    const log = receipt.events?.find((l: any) => l.topics[0] === LizardMinter__factory.createInterface().getEventTopic('Mint'));
     let weekly = '-1';
     let growth = '-1';
     if (log) {
-      weekly = formatUnits(ConeMinter__factory.createInterface().parseLog(log).args[1]);
-      growth = formatUnits(ConeMinter__factory.createInterface().parseLog(log).args[2]);
+      weekly = formatUnits(LizardMinter__factory.createInterface().parseLog(log).args[1]);
+      growth = formatUnits(LizardMinter__factory.createInterface().parseLog(log).args[2]);
     }
 
     const tokenBalance = await core.token.balanceOf(owner.address);

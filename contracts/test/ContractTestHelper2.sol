@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.15;
 
-import "../base/core/ConePair.sol";
+import "../base/core/LizardPair.sol";
 import "../base/vote/Ve.sol";
 
 contract ContractTestHelper2 is IERC721Receiver {

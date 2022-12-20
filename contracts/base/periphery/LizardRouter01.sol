@@ -9,7 +9,7 @@ import "../../interface/IWMATIC.sol";
 import "../../interface/IPair.sol";
 import "../../interface/IFactory.sol";
 
-contract ConeRouter01 {
+contract LizardRouter01 {
   using SafeERC20 for IERC20;
 
   struct Route {
@@ -24,7 +24,7 @@ contract ConeRouter01 {
   bytes32 immutable pairCodeHash;
 
   modifier ensure(uint deadline) {
-    require(deadline >= block.timestamp, 'ConeRouter: EXPIRED');
+    require(deadline >= block.timestamp, 'LizardRouter: EXPIRED');
     _;
   }
 
@@ -36,7 +36,7 @@ contract ConeRouter01 {
 
   receive() external payable {
     // only accept ETH via fallback from the WETH contract
-    require(msg.sender == address(wmatic), "ConeRouter: NOT_WMATIC");
+    require(msg.sender == address(wmatic), "LizardRouter: NOT_WMATIC");
   }
 
   function sortTokens(address tokenA, address tokenB) external pure returns (address token0, address token1) {
@@ -44,9 +44,9 @@ contract ConeRouter01 {
   }
 
   function _sortTokens(address tokenA, address tokenB) internal pure returns (address token0, address token1) {
-    require(tokenA != tokenB, 'ConeRouter: IDENTICAL_ADDRESSES');
+    require(tokenA != tokenB, 'LizardRouter: IDENTICAL_ADDRESSES');
     (token0, token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-    require(token0 != address(0), 'ConeRouter: ZERO_ADDRESS');
+    require(token0 != address(0), 'LizardRouter: ZERO_ADDRESS');
   }
 
   function pairFor(address tokenA, address tokenB, bool stable) external view returns (address pair) {
@@ -70,8 +70,8 @@ contract ConeRouter01 {
 
   /// @dev Given some amount of an asset and pair reserves, returns an equivalent amount of the other asset.
   function _quoteLiquidity(uint amountA, uint reserveA, uint reserveB) internal pure returns (uint amountB) {
-    require(amountA > 0, 'ConeRouter: INSUFFICIENT_AMOUNT');
-    require(reserveA > 0 && reserveB > 0, 'ConeRouter: INSUFFICIENT_LIQUIDITY');
+    require(amountA > 0, 'LizardRouter: INSUFFICIENT_AMOUNT');
+    require(reserveA > 0 && reserveB > 0, 'LizardRouter: INSUFFICIENT_LIQUIDITY');
     amountB = amountA * reserveB / reserveA;
   }
 
@@ -115,7 +115,7 @@ contract ConeRouter01 {
   }
 
   function _getAmountsOut(uint amountIn, Route[] memory routes) internal view returns (uint[] memory amounts) {
-    require(routes.length >= 1, 'ConeRouter: INVALID_PATH');
+    require(routes.length >= 1, 'LizardRouter: INVALID_PATH');
     amounts = new uint[](routes.length + 1);
     amounts[0] = amountIn;
     for (uint i = 0; i < routes.length; i++) {
@@ -193,8 +193,8 @@ contract ConeRouter01 {
     uint amountAMin,
     uint amountBMin
   ) internal returns (uint amountA, uint amountB) {
-    require(amountADesired >= amountAMin, "ConeRouter: DESIRED_A_AMOUNT");
-    require(amountBDesired >= amountBMin, "ConeRouter: DESIRED_B_AMOUNT");
+    require(amountADesired >= amountAMin, "LizardRouter: DESIRED_A_AMOUNT");
+    require(amountBDesired >= amountBMin, "LizardRouter: DESIRED_B_AMOUNT");
     // create the pair if it doesn't exist yet
     address _pair = IFactory(factory).getPair(tokenA, tokenB, stable);
     if (_pair == address(0)) {
@@ -206,12 +206,12 @@ contract ConeRouter01 {
     } else {
       uint amountBOptimal = _quoteLiquidity(amountADesired, reserveA, reserveB);
       if (amountBOptimal <= amountBDesired) {
-        require(amountBOptimal >= amountBMin, 'ConeRouter: INSUFFICIENT_B_AMOUNT');
+        require(amountBOptimal >= amountBMin, 'LizardRouter: INSUFFICIENT_B_AMOUNT');
         (amountA, amountB) = (amountADesired, amountBOptimal);
       } else {
         uint amountAOptimal = _quoteLiquidity(amountBDesired, reserveB, reserveA);
         assert(amountAOptimal <= amountADesired);
-        require(amountAOptimal >= amountAMin, 'ConeRouter: INSUFFICIENT_A_AMOUNT');
+        require(amountAOptimal >= amountAMin, 'LizardRouter: INSUFFICIENT_A_AMOUNT');
         (amountA, amountB) = (amountAOptimal, amountBDesired);
       }
     }
@@ -310,8 +310,8 @@ contract ConeRouter01 {
     (uint amount0, uint amount1) = IPair(pair).burn(to);
     (address token0,) = _sortTokens(tokenA, tokenB);
     (amountA, amountB) = tokenA == token0 ? (amount0, amount1) : (amount1, amount0);
-    require(amountA >= amountAMin, 'ConeRouter: INSUFFICIENT_A_AMOUNT');
-    require(amountB >= amountBMin, 'ConeRouter: INSUFFICIENT_B_AMOUNT');
+    require(amountA >= amountAMin, 'LizardRouter: INSUFFICIENT_A_AMOUNT');
+    require(amountB >= amountBMin, 'LizardRouter: INSUFFICIENT_B_AMOUNT');
   }
 
   function removeLiquidityMATIC(
@@ -504,7 +504,7 @@ contract ConeRouter01 {
     routes[0].to = tokenTo;
     routes[0].stable = stable;
     amounts = _getAmountsOut(amountIn, routes);
-    require(amounts[amounts.length - 1] >= amountOutMin, 'ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+    require(amounts[amounts.length - 1] >= amountOutMin, 'LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT');
     IERC20(routes[0].from).safeTransferFrom(
       msg.sender, _pairFor(routes[0].from, routes[0].to, routes[0].stable), amounts[0]
     );
@@ -519,7 +519,7 @@ contract ConeRouter01 {
     uint deadline
   ) external ensure(deadline) returns (uint[] memory amounts) {
     amounts = _getAmountsOut(amountIn, routes);
-    require(amounts[amounts.length - 1] >= amountOutMin, 'ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+    require(amounts[amounts.length - 1] >= amountOutMin, 'LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT');
     IERC20(routes[0].from).safeTransferFrom(
       msg.sender, _pairFor(routes[0].from, routes[0].to, routes[0].stable), amounts[0]
     );
@@ -532,9 +532,9 @@ contract ConeRouter01 {
   ensure(deadline)
   returns (uint[] memory amounts)
   {
-    require(routes[0].from == address(wmatic), 'ConeRouter: INVALID_PATH');
+    require(routes[0].from == address(wmatic), 'LizardRouter: INVALID_PATH');
     amounts = _getAmountsOut(msg.value, routes);
-    require(amounts[amounts.length - 1] >= amountOutMin, 'ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+    require(amounts[amounts.length - 1] >= amountOutMin, 'LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT');
     wmatic.deposit{value : amounts[0]}();
     assert(wmatic.transfer(_pairFor(routes[0].from, routes[0].to, routes[0].stable), amounts[0]));
     _swap(amounts, routes, to);
@@ -545,9 +545,9 @@ contract ConeRouter01 {
   ensure(deadline)
   returns (uint[] memory amounts)
   {
-    require(routes[routes.length - 1].to == address(wmatic), 'ConeRouter: INVALID_PATH');
+    require(routes[routes.length - 1].to == address(wmatic), 'LizardRouter: INVALID_PATH');
     amounts = _getAmountsOut(amountIn, routes);
-    require(amounts[amounts.length - 1] >= amountOutMin, 'ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+    require(amounts[amounts.length - 1] >= amountOutMin, 'LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT');
     IERC20(routes[0].from).safeTransferFrom(
       msg.sender, _pairFor(routes[0].from, routes[0].to, routes[0].stable), amounts[0]
     );
@@ -572,7 +572,7 @@ contract ConeRouter01 {
     _swapSupportingFeeOnTransferTokens(routes, to);
     require(
       IERC20(routes[routes.length - 1].to).balanceOf(to) - balanceBefore >= amountOutMin,
-      'ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT'
+      'LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT'
     );
   }
 
@@ -586,7 +586,7 @@ contract ConeRouter01 {
   payable
   ensure(deadline)
   {
-    require(routes[0].from == address(wmatic), 'ConeRouter: INVALID_PATH');
+    require(routes[0].from == address(wmatic), 'LizardRouter: INVALID_PATH');
     uint amountIn = msg.value;
     wmatic.deposit{value : amountIn}();
     assert(wmatic.transfer(_pairFor(routes[0].from, routes[0].to, routes[0].stable), amountIn));
@@ -594,7 +594,7 @@ contract ConeRouter01 {
     _swapSupportingFeeOnTransferTokens(routes, to);
     require(
       IERC20(routes[routes.length - 1].to).balanceOf(to) - balanceBefore >= amountOutMin,
-      'ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT'
+      'LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT'
     );
   }
 
@@ -608,13 +608,13 @@ contract ConeRouter01 {
   external
   ensure(deadline)
   {
-    require(routes[routes.length - 1].to == address(wmatic), 'ConeRouter: INVALID_PATH');
+    require(routes[routes.length - 1].to == address(wmatic), 'LizardRouter: INVALID_PATH');
     IERC20(routes[0].from).safeTransferFrom(
       msg.sender, _pairFor(routes[0].from, routes[0].to, routes[0].stable), amountIn
     );
     _swapSupportingFeeOnTransferTokens(routes, address(this));
     uint amountOut = IERC20(address(wmatic)).balanceOf(address(this));
-    require(amountOut >= amountOutMin, 'ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+    require(amountOut >= amountOutMin, 'LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT');
     wmatic.withdraw(amountOut);
     _safeTransferMATIC(to, amountOut);
   }
@@ -632,6 +632,6 @@ contract ConeRouter01 {
 
   function _safeTransferMATIC(address to, uint value) internal {
     (bool success,) = to.call{value : value}(new bytes(0));
-    require(success, 'ConeRouter: ETH_TRANSFER_FAILED');
+    require(success, 'LizardRouter: ETH_TRANSFER_FAILED');
   }
 }

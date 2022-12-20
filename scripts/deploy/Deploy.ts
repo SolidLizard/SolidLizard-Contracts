@@ -6,11 +6,11 @@ import {BigNumber, ContractFactory, utils} from "ethers";
 import {Libraries} from "hardhat-deploy/dist/types";
 import {
   BribeFactory,
-  Cone,
-  ConeFactory,
-  ConeMinter,
-  ConeRouter01,
-  ConeVoter,
+  Lizard,
+  LizardFactory,
+  LizardMinter,
+  LizardRouter01,
+  LizardVoter,
   Controller,
   GaugeFactory,
   Token,
@@ -70,8 +70,8 @@ export class Deploy {
     return _factory.attach(receipt.contractAddress);
   }
 
-  public static async deployCone(signer: SignerWithAddress) {
-    return (await Deploy.deployContract(signer, 'Cone')) as Cone;
+  public static async deployLizard(signer: SignerWithAddress) {
+    return (await Deploy.deployContract(signer, 'Lizard')) as Lizard;
   }
 
   public static async deployToken(signer: SignerWithAddress, name: string, symbol: string, decimal: number) {
@@ -86,16 +86,16 @@ export class Deploy {
     return (await Deploy.deployContract(signer, 'BribeFactory')) as BribeFactory;
   }
 
-  public static async deployConeFactory(signer: SignerWithAddress) {
-    return (await Deploy.deployContract(signer, 'ConeFactory')) as ConeFactory;
+  public static async deployLizardFactory(signer: SignerWithAddress) {
+    return (await Deploy.deployContract(signer, 'LizardFactory')) as LizardFactory;
   }
 
-  public static async deployConeRouter01(
+  public static async deployLizardRouter01(
     signer: SignerWithAddress,
     factory: string,
     networkToken: string,
   ) {
-    return (await Deploy.deployContract(signer, 'ConeRouter01', factory, networkToken)) as ConeRouter01;
+    return (await Deploy.deployContract(signer, 'LizardRouter01', factory, networkToken)) as LizardRouter01;
   }
 
   public static async deployVe(signer: SignerWithAddress, token: string, controller: string) {
@@ -106,7 +106,7 @@ export class Deploy {
     return (await Deploy.deployContract(signer, 'VeDist', ve)) as VeDist;
   }
 
-  public static async deployConeVoter(
+  public static async deployLizardVoter(
     signer: SignerWithAddress,
     ve: string,
     factory: string,
@@ -115,25 +115,25 @@ export class Deploy {
   ) {
     return (await Deploy.deployContract(
       signer,
-      'ConeVoter',
+      'LizardVoter',
       ve,
       factory,
       gauges,
       bribes,
-    )) as ConeVoter;
+    )) as LizardVoter;
   }
 
-  public static async deployConeMinter(
+  public static async deployLizardMinter(
     signer: SignerWithAddress,
     ve: string,
     controller: string,
   ) {
     return (await Deploy.deployContract(
       signer,
-      'ConeMinter',
+      'LizardMinter',
       ve,
       controller
-    )) as ConeMinter;
+    )) as LizardMinter;
   }
 
   public static async deployCore(
@@ -156,7 +156,7 @@ export class Deploy {
       veDist,
       voter,
       minter,
-    ] = await Deploy.deployConeSystem(
+    ] = await Deploy.deployLizardSystem(
       signer,
       voterTokens,
       minterClaimants,
@@ -167,15 +167,15 @@ export class Deploy {
     );
 
     return new CoreAddresses(
-      token as Cone,
+      token as Lizard,
       gaugesFactory as GaugeFactory,
       bribesFactory as BribeFactory,
-      baseFactory as ConeFactory,
-      router as ConeRouter01,
+      baseFactory as LizardFactory,
+      router as LizardRouter01,
       ve as Ve,
       veDist as VeDist,
-      voter as ConeVoter,
-      minter as ConeMinter,
+      voter as LizardVoter,
+      minter as LizardMinter,
       controller as Controller,
     );
   }
@@ -185,13 +185,13 @@ export class Deploy {
     signer: SignerWithAddress,
     networkToken: string,
   ) {
-    const baseFactory = await Deploy.deployConeFactory(signer);
-    const router = await Deploy.deployConeRouter01(signer, baseFactory.address, networkToken);
+    const baseFactory = await Deploy.deployLizardFactory(signer);
+    const router = await Deploy.deployLizardRouter01(signer, baseFactory.address, networkToken);
 
     return [baseFactory, router];
   }
 
-  public static async deployConeSystem(
+  public static async deployLizardSystem(
     signer: SignerWithAddress,
     voterTokens: string[],
     minterClaimants: string[],
@@ -202,7 +202,7 @@ export class Deploy {
   ) {
     const controller = await Deploy.deployContract(signer, 'Controller') as Controller;
     await Misc.delay(10_000);
-    const token = await Deploy.deployCone(signer);
+    const token = await Deploy.deployLizard(signer);
     await Misc.delay(10_000);
     const ve = await Deploy.deployVe(signer, token.address, controller.address);
     await Misc.delay(10_000);
@@ -214,9 +214,9 @@ export class Deploy {
 
     const veDist = await Deploy.deployVeDist(signer, ve.address);
     await Misc.delay(10_000);
-    const voter = await Deploy.deployConeVoter(signer, ve.address, baseFactory, gaugesFactory.address, bribesFactory.address);
+    const voter = await Deploy.deployLizardVoter(signer, ve.address, baseFactory, gaugesFactory.address, bribesFactory.address);
     await Misc.delay(10_000);
-    const minter = await Deploy.deployConeMinter(signer, ve.address, controller.address);
+    const minter = await Deploy.deployLizardMinter(signer, ve.address, controller.address);
     await Misc.delay(10_000);
 
     await Misc.runAndWait(() => token.setMinter(minter.address));

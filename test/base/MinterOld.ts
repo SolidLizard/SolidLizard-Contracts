@@ -1,7 +1,7 @@
 /* tslint:disable:variable-name no-shadowed-variable ban-types no-var-requires no-any */
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { network } from "hardhat";
-import {Controller, Cone, ConeMinter, Token, Ve, VeDist } from "../../typechain";
+import {Controller, Lizard, LizardMinter, Token, Ve, VeDist } from "../../typechain";
 import {Deploy} from "../../scripts/deploy/Deploy";
 
 const { expect } = require("chai");
@@ -26,28 +26,28 @@ const { ethers } = require("hardhat");
 describe("minter old tests", function () {
 
   let token;
-  let ve_underlying:Cone;
+  let ve_underlying:Lizard;
   let ve:Ve;
   let owner:SignerWithAddress;
-  let minter:ConeMinter;
+  let minter:LizardMinter;
   let ve_dist:VeDist;
 
   it("deploy base", async function () {
     [owner] = await ethers.getSigners(0);
     token = await ethers.getContractFactory("Token");
-    const Cone = await ethers.getContractFactory("Cone");
+    const Lizard = await ethers.getContractFactory("Lizard");
     const controllerCtr = await ethers.getContractFactory("Controller");
     const controller = await controllerCtr.deploy() as Controller;
     const mim = await token.deploy('MIM', 'MIM', 18, owner.address);
     await mim.mint(owner.address, ethers.BigNumber.from("1000000000000000000000000000000"));
-    ve_underlying = await Cone.deploy();
+    ve_underlying = await Lizard.deploy();
     ve = await Deploy.deployVe(owner, ve_underlying.address, controller.address)
     await ve_underlying.mint(owner.address, ethers.BigNumber.from("10000000000000000000000000"));
-    const ConeFactory = await ethers.getContractFactory("ConeFactory");
-    const factory = await ConeFactory.deploy();
+    const LizardFactory = await ethers.getContractFactory("LizardFactory");
+    const factory = await LizardrdrdrdFactory.deploy();
     await factory.deployed();
-    const ConeRouter01 = await ethers.getContractFactory("ConeRouter01");
-    const router = await ConeRouter01.deploy(factory.address, owner.address);
+    const LizardRouter01 = await ethers.getContractFactory("LizardRouter01");
+    const router = await LizardRouter01.deploy(factory.address, owner.address);
     await router.deployed();
     const GaugeFactory = await ethers.getContractFactory("GaugeFactory");
     const gauges_factory = await GaugeFactory.deploy();
@@ -55,8 +55,8 @@ describe("minter old tests", function () {
     const BribeFactory = await ethers.getContractFactory("BribeFactory");
     const bribe_factory = await BribeFactory.deploy();
     await bribe_factory.deployed();
-    const ConeVoter = await ethers.getContractFactory("ConeVoter");
-    const voter = await ConeVoter.deploy(ve.address, factory.address, gauges_factory.address, bribe_factory.address);
+    const LizardVoter = await ethers.getContractFactory("LizardVoter");
+    const voter = await LizardVoter.deploy(ve.address, factory.address, gauges_factory.address, bribe_factory.address);
     await voter.deployed();
 
     await voter.initialize([mim.address, ve_underlying.address],owner.address);
@@ -69,7 +69,7 @@ describe("minter old tests", function () {
     await controller.setVeDist(ve_dist.address)
     await controller.setVoter(voter.address)
 
-    const Minter = await ethers.getContractFactory("ConeMinter");
+    const Minter = await ethers.getContractFactory("LizardMinter");
     minter = await Minter.deploy(ve.address, controller.address);
     await minter.deployed();
     await ve_dist.setDepositor(minter.address);

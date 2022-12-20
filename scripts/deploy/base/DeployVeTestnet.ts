@@ -41,7 +41,7 @@ async function main() {
     veDist,
     voter,
     minter,
-  ] = await Deploy.deployConeSystem(
+  ] = await Deploy.deployLizardSystem(
     signer,
     voterTokens,
     claimants,

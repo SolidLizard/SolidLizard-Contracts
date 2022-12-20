@@ -1,7 +1,7 @@
 {
-  "name": "cone-exchange",
+  "name": "lizard-exchange",
   "version": "1.0.0",
-  "description": "Cone contracts",
+  "description": "Lizard contracts",
   "main": "hardhat.config.ts",
   "directories": {
     "test": "test"
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cone-exchange/cone-contracts.git"
+    "url": "https://github.com/lizard-exchange/lizard-contracts.git"
   },
   "keywords": [
     "solidity",
@@ -29,9 +29,9 @@
     "smart",
     "contracts"
   ],
-  "author": "Cone team <admin@cone.exchange>",
+  "author": "Lizard team <admin@lizard.exchange>",
   "license": "MIT",
-  "homepage": "https://cone.exchange/",
+  "homepage": "https://lizard.exchange/",
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.4",
     "@nomiclabs/hardhat-etherscan": "^3.1.0",

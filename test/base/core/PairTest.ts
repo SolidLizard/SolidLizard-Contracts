@@ -1,8 +1,8 @@
 import {
   ContractTestHelper,
-  ConeFactory,
-  ConePair,
-  ConeRouter01,
+  LizardFactory,
+  LizardPair,
+  LizardRouter01,
   IERC20__factory,
   Token
 } from "../../../typechain";
@@ -26,8 +26,8 @@ describe("pair tests", function () {
   let owner: SignerWithAddress;
   let owner2: SignerWithAddress;
   let owner3: SignerWithAddress;
-  let factory: ConeFactory;
-  let router: ConeRouter01;
+  let factory: LizardFactory;
+  let router: LizardRouter01;
   let testHelper: ContractTestHelper;
 
   let ust: Token;
@@ -35,8 +35,8 @@ describe("pair tests", function () {
   let dai: Token;
   let wmatic: Token;
 
-  let pair: ConePair;
-  let pair2: ConePair;
+  let pair: LizardPair;
+  let pair2: LizardPair;
 
 
   before(async function () {
@@ -44,8 +44,8 @@ describe("pair tests", function () {
     [owner, owner2, owner3] = await ethers.getSigners();
     wmatic = await Deploy.deployContract(owner, 'Token', 'WMATIC', 'WMATIC', 18, owner.address) as Token;
     await wmatic.mint(owner.address, parseUnits('10000'))
-    factory = await Deploy.deployConeFactory(owner);
-    router = await Deploy.deployConeRouter01(owner, factory.address, wmatic.address);
+    factory = await Deploy.deployLizardFactory(owner);
+    router = await Deploy.deployLizardRouter01(owner, factory.address, wmatic.address);
 
     [ust, mim, dai] = await TestHelper.createMockTokensAndMint(owner);
     await ust.transfer(owner2.address, utils.parseUnits('10000000000', 6));
@@ -210,11 +210,11 @@ describe("pair tests", function () {
   });
 
   it("insufficient liquidity minted revert", async function () {
-    await expect(pair2.mint(owner.address)).revertedWith('ConePair: INSUFFICIENT_LIQUIDITY_MINTED');
+    await expect(pair2.mint(owner.address)).revertedWith('LizardPair: INSUFFICIENT_LIQUIDITY_MINTED');
   });
 
   it("insufficient liquidity burned revert", async function () {
-    await expect(pair2.burn(owner.address)).revertedWith('ConePair: INSUFFICIENT_LIQUIDITY_BURNED');
+    await expect(pair2.burn(owner.address)).revertedWith('LizardPair: INSUFFICIENT_LIQUIDITY_BURNED');
   });
 
   it("swap on pause test", async function () {
@@ -223,15 +223,15 @@ describe("pair tests", function () {
   });
 
   it("insufficient output amount", async function () {
-    await expect(pair2.swap(0, 0, owner.address, '0x')).revertedWith('ConePair: INSUFFICIENT_OUTPUT_AMOUNT');
+    await expect(pair2.swap(0, 0, owner.address, '0x')).revertedWith('LizardPair: INSUFFICIENT_OUTPUT_AMOUNT');
   });
 
   it("insufficient liquidity", async function () {
-    await expect(pair2.swap(Misc.MAX_UINT, Misc.MAX_UINT, owner.address, '0x')).revertedWith('ConePair: INSUFFICIENT_LIQUIDITY');
+    await expect(pair2.swap(Misc.MAX_UINT, Misc.MAX_UINT, owner.address, '0x')).revertedWith('LizardPair: INSUFFICIENT_LIQUIDITY');
   });
 
   it("invalid to", async function () {
-    await expect(pair2.swap(1, 1, wmatic.address, '0x')).revertedWith('ConePair: INVALID_TO');
+    await expect(pair2.swap(1, 1, wmatic.address, '0x')).revertedWith('LizardPair: INVALID_TO');
   });
 
   it("flash swap", async function () {
@@ -261,12 +261,12 @@ describe("pair tests", function () {
   });
 
   it("insufficient input amount", async function () {
-    await expect(pair2.swap(10000000, 1000000, owner.address, '0x')).revertedWith('ConePair: INSUFFICIENT_INPUT_AMOUNT');
+    await expect(pair2.swap(10000000, 1000000, owner.address, '0x')).revertedWith('LizardPair: INSUFFICIENT_INPUT_AMOUNT');
   });
 
   it("k revert", async function () {
     await mim.transfer(pair2.address, 1);
-    await expect(pair2.swap(10000000, 1000000, owner.address, '0x')).revertedWith('ConePair: K');
+    await expect(pair2.swap(10000000, 1000000, owner.address, '0x')).revertedWith('LizardPair: K');
   });
 
   it("approve with zero adr revert", async function () {
@@ -391,7 +391,7 @@ describe("pair tests", function () {
     expect(await dai.balanceOf(owner.address)).eq(balance.add(out))
 
     await mim.transfer(p.address, parseUnits('1'));
-    await expect(p.swap(0, (await p.getAmountOut(parseUnits('1'), mim.address)).add(1), owner.address, '0x')).revertedWith('ConePair: K')
+    await expect(p.swap(0, (await p.getAmountOut(parseUnits('1'), mim.address)).add(1), owner.address, '0x')).revertedWith('LizardPair: K')
 
     // balance = await dai.balanceOf(owner.address);
     // reserves = await p.getReserves();
@@ -410,7 +410,7 @@ describe("pair tests", function () {
     // console.log('OUT offchain', formatUnits(out))
     // console.log('OUT chain', formatUnits(await p.getAmountOut(parseUnits('1'), mim.address)))
     // await p.swap(0, out, owner.address, '0x')
-    // await expect(p.swap(0, out, owner.address, '0x')).revertedWith('ConePair: K')
+    // await expect(p.swap(0, out, owner.address, '0x')).revertedWith('LizardPair: K')
 
   });
 
@@ -476,7 +476,7 @@ describe("pair tests", function () {
 
 });
 
-async function checkTwap(pair: ConePair, tokenIn: string, diff: BigNumber) {
+async function checkTwap(pair: LizardPair, tokenIn: string, diff: BigNumber) {
   const amount = parseUnits('1');
   const twapPrice = await pair.quote(tokenIn, amount, 10)
   const curPrice = await pair.getAmountOut(amount, tokenIn);
@@ -491,8 +491,8 @@ async function checkTwap(pair: ConePair, tokenIn: string, diff: BigNumber) {
 
 async function swapInLoop(
   owner: SignerWithAddress,
-  factory: ConeFactory,
-  router: ConeRouter01,
+  factory: LizardFactory,
+  router: LizardRouter01,
   loops: number,
 ) {
   const amount = parseUnits('1');
@@ -529,8 +529,8 @@ async function swapInLoop(
 
 async function prices(
   owner: SignerWithAddress,
-  factory: ConeFactory,
-  router: ConeRouter01,
+  factory: LizardFactory,
+  router: LizardRouter01,
   stable = true,
 ) {
   const tokenA = await Deploy.deployContract(owner, 'Token', 'UST', 'UST', 18, owner.address) as Token;

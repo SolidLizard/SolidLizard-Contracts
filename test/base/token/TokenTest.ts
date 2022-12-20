@@ -64,24 +64,24 @@ describe("token tests", function () {
   });
 
   it("set minter reject", async function () {
-    await expect(core.token.setMinter(Misc.ZERO_ADDRESS)).revertedWith('CONE: Not minter')
+    await expect(core.token.setMinter(Misc.ZERO_ADDRESS)).revertedWith('LIZARD: Not minter')
   });
 
   it("approve reject", async function () {
-    await expect(core.token.approve(Misc.ZERO_ADDRESS, 0)).revertedWith('CONE: Approve to the zero address')
+    await expect(core.token.approve(Misc.ZERO_ADDRESS, 0)).revertedWith('LIZARD: Approve to the zero address')
   });
 
   it("mint to zero address reject", async function () {
     const minter = await Misc.impersonate(await core.token.minter());
-    await expect(core.token.connect(minter).mint(Misc.ZERO_ADDRESS, 1)).revertedWith('CONE: Mint to the zero address')
+    await expect(core.token.connect(minter).mint(Misc.ZERO_ADDRESS, 1)).revertedWith('LIZARD: Mint to the zero address')
   });
 
   it("transfer to zero address reject", async function () {
-    await expect(core.token.transfer(Misc.ZERO_ADDRESS, 1)).revertedWith('CONE: Transfer to the zero address')
+    await expect(core.token.transfer(Misc.ZERO_ADDRESS, 1)).revertedWith('LIZARD: Transfer to the zero address')
   });
 
   it("transfer to too much reject", async function () {
-    await expect(core.token.transfer(owner2.address, Misc.MAX_UINT)).revertedWith('CONE: Transfer amount exceeds balance')
+    await expect(core.token.transfer(owner2.address, Misc.MAX_UINT)).revertedWith('LIZARD: Transfer amount exceeds balance')
   });
 
   it("transfer from to too much reject", async function () {
@@ -92,11 +92,11 @@ describe("token tests", function () {
     await core.token.transferFrom(owner2.address, owner.address, 100);
     expect(await core.token.balanceOf(owner.address)).eq(100);
     expect(await core.token.balanceOf(owner2.address)).eq(0);
-    await expect(core.token.transferFrom(owner2.address, owner.address, 1)).revertedWith('CONE: Insufficient allowance')
+    await expect(core.token.transferFrom(owner2.address, owner.address, 1)).revertedWith('LIZARD: Insufficient allowance')
   });
 
   it("mint from not minter reject", async function () {
-    await expect(core.token.mint(Misc.ZERO_ADDRESS, 1)).revertedWith('CONE: Not minter')
+    await expect(core.token.mint(Misc.ZERO_ADDRESS, 1)).revertedWith('LIZARD: Not minter')
   });
 
 });

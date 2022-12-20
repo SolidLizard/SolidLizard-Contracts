@@ -1,7 +1,7 @@
 import {
-  ConeFactory,
-  ConePair__factory,
-  ConeRouter01, SwapLibrary,
+  LizardFactory,
+  LizardPair__factory,
+  LizardRouter01, SwapLibrary,
   Token,
   TokenWithFee
 } from "../../../typechain";
@@ -25,8 +25,8 @@ describe("router tests", function () {
 
   let owner: SignerWithAddress;
   let owner2: SignerWithAddress;
-  let factory: ConeFactory;
-  let router: ConeRouter01;
+  let factory: LizardFactory;
+  let router: LizardRouter01;
 
   let wmatic: Token;
   let ust: Token;
@@ -41,8 +41,8 @@ describe("router tests", function () {
     [owner, owner2] = await ethers.getSigners();
     wmatic = await Deploy.deployContract(owner, 'Token', 'WMATIC', 'WMATIC', 18, owner.address) as Token;
     await wmatic.mint(owner.address, parseUnits('1000'));
-    factory = await Deploy.deployConeFactory(owner);
-    router = await Deploy.deployConeRouter01(owner, factory.address, wmatic.address);
+    factory = await Deploy.deployLizardFactory(owner);
+    router = await Deploy.deployLizardRouter01(owner, factory.address, wmatic.address);
     swapLib = await Deploy.deployContract(owner, 'SwapLibrary', router.address) as SwapLibrary;
 
     [ust, mim, dai] = await TestHelper.createMockTokensAndMint(owner);
@@ -157,7 +157,7 @@ describe("router tests", function () {
 
     const pairAdr = await factory.getPair(mim.address, wmatic.address, true);
 
-    await ConePair__factory.connect(pairAdr, owner).approve(router.address, parseUnits('1111'));
+    await LizardPair__factory.connect(pairAdr, owner).approve(router.address, parseUnits('1111'));
     await router.removeLiquidityMATIC(
       mim.address,
       true,
@@ -184,7 +184,7 @@ describe("router tests", function () {
     );
 
     const pairAdr = await factory.getPair(mim.address, wmatic.address, true);
-    const pair = ConePair__factory.connect(pairAdr, owner);
+    const pair = LizardPair__factory.connect(pairAdr, owner);
 
     const {
       v,
@@ -219,7 +219,7 @@ describe("router tests", function () {
     );
 
     const pairAdr = await factory.getPair(mim.address, wmatic.address, true);
-    const pair = ConePair__factory.connect(pairAdr, owner);
+    const pair = LizardPair__factory.connect(pairAdr, owner);
 
     const {
       v,
@@ -361,7 +361,7 @@ describe("router tests", function () {
     );
 
     const pairAdr = await factory.getPair(tokenWithFee.address, wmatic.address, true);
-    const pair = ConePair__factory.connect(pairAdr, owner);
+    const pair = LizardPair__factory.connect(pairAdr, owner);
     const pairBal = await pair.balanceOf(owner.address);
 
     const {
@@ -520,21 +520,21 @@ describe("router tests", function () {
       owner.address,
       1,
       {value: parseUnits('10')}
-    )).revertedWith('ConeRouter: EXPIRED');
+    )).revertedWith('LizardRouter: EXPIRED');
   });
 
   it("sort tokens identical address", async function () {
     await expect(router.sortTokens(
       mim.address,
       mim.address,
-    )).revertedWith('ConeRouter: IDENTICAL_ADDRESSES');
+    )).revertedWith('LizardRouter: IDENTICAL_ADDRESSES');
   });
 
   it("sort tokens zero address", async function () {
     await expect(router.sortTokens(
       mim.address,
       Misc.ZERO_ADDRESS,
-    )).revertedWith('ConeRouter: ZERO_ADDRESS');
+    )).revertedWith('LizardRouter: ZERO_ADDRESS');
   });
 
   it("getAmountOut for not exist pair", async function () {
@@ -546,7 +546,7 @@ describe("router tests", function () {
   });
 
   it("receive matic not from wmatic reject", async function () {
-    await expect(owner.sendTransaction({value: 1, to: router.address})).revertedWith("ConeRouter: NOT_WMATIC");
+    await expect(owner.sendTransaction({value: 1, to: router.address})).revertedWith("LizardRouter: NOT_WMATIC");
   });
 
   it("getReserves", async function () {
@@ -564,15 +564,15 @@ describe("router tests", function () {
   });
 
   it("getAmountsOut wrong path", async function () {
-    await expect(router.getAmountsOut(0, [])).revertedWith('ConeRouter: INVALID_PATH');
+    await expect(router.getAmountsOut(0, [])).revertedWith('LizardRouter: INVALID_PATH');
   });
 
   it("quoteLiquidity zero amount", async function () {
-    await expect(router.quoteLiquidity(0, 0, 0)).revertedWith('ConeRouter: INSUFFICIENT_AMOUNT');
+    await expect(router.quoteLiquidity(0, 0, 0)).revertedWith('LizardRouter: INSUFFICIENT_AMOUNT');
   });
 
   it("quoteLiquidity IL", async function () {
-    await expect(router.quoteLiquidity(1, 0, 0)).revertedWith('ConeRouter: INSUFFICIENT_LIQUIDITY');
+    await expect(router.quoteLiquidity(1, 0, 0)).revertedWith('LizardRouter: INSUFFICIENT_LIQUIDITY');
   });
 
   it("getAmountsOut with not exist pair", async function () {
@@ -593,7 +593,7 @@ describe("router tests", function () {
       owner.address,
       99999999999,
       {value: parseUnits('10')}
-    )).revertedWith('ConeRouter: DESIRED_A_AMOUNT');
+    )).revertedWith('LizardRouter: DESIRED_A_AMOUNT');
     await expect(router.addLiquidityMATIC(
       mim.address,
       true,
@@ -603,7 +603,7 @@ describe("router tests", function () {
       owner.address,
       99999999999,
       {value: parseUnits('10')}
-    )).revertedWith('ConeRouter: DESIRED_B_AMOUNT');
+    )).revertedWith('LizardRouter: DESIRED_B_AMOUNT');
   });
 
 
@@ -628,7 +628,7 @@ describe("router tests", function () {
       owner.address,
       99999999999,
       {value: parseUnits('0.77')}
-    )).revertedWith('ConeRouter: INSUFFICIENT_B_AMOUNT');
+    )).revertedWith('LizardRouter: INSUFFICIENT_B_AMOUNT');
 
     await expect(router.addLiquidityMATIC(
       mim.address,
@@ -639,7 +639,7 @@ describe("router tests", function () {
       owner.address,
       99999999999,
       {value: parseUnits('0.01')}
-    )).revertedWith('ConeRouter: INSUFFICIENT_A_AMOUNT');
+    )).revertedWith('LizardRouter: INSUFFICIENT_A_AMOUNT');
   });
 
 
@@ -684,7 +684,7 @@ describe("router tests", function () {
 
     const pairAdr = await factory.getPair(mim.address, wmatic.address, true);
 
-    await ConePair__factory.connect(pairAdr, owner).approve(router.address, parseUnits('1111'));
+    await LizardPair__factory.connect(pairAdr, owner).approve(router.address, parseUnits('1111'));
     await expect(router.removeLiquidity(
       mim.address,
       wmatic.address,
@@ -694,7 +694,7 @@ describe("router tests", function () {
       0,
       owner.address,
       99999999999,
-    )).revertedWith('ConeRouter: INSUFFICIENT_A_AMOUNT');
+    )).revertedWith('LizardRouter: INSUFFICIENT_A_AMOUNT');
     await expect(router.removeLiquidity(
       mim.address,
       wmatic.address,
@@ -704,7 +704,7 @@ describe("router tests", function () {
       parseUnits('1'),
       owner.address,
       99999999999,
-    )).revertedWith('ConeRouter: INSUFFICIENT_B_AMOUNT');
+    )).revertedWith('LizardRouter: INSUFFICIENT_B_AMOUNT');
   });
 
   it("removeLiquidityMATICSupportingFeeOnTransferTokens test", async function () {
@@ -722,7 +722,7 @@ describe("router tests", function () {
 
     const pairAdr = await factory.getPair(tokenWithFee.address, wmatic.address, true);
 
-    await ConePair__factory.connect(pairAdr, owner).approve(router.address, parseUnits('1111'));
+    await LizardPair__factory.connect(pairAdr, owner).approve(router.address, parseUnits('1111'));
     await router.removeLiquidityMATICSupportingFeeOnTransferTokens(
       tokenWithFee.address,
       true,
@@ -743,7 +743,7 @@ describe("router tests", function () {
       true,
       owner.address,
       BigNumber.from('999999999999999999'),
-    )).revertedWith('ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+    )).revertedWith('LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT');
   });
 
   it("swapExactTokensForTokens IOA test", async function () {
@@ -757,7 +757,7 @@ describe("router tests", function () {
       }],
       owner.address,
       BigNumber.from('999999999999999999'),
-    )).revertedWith('ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+    )).revertedWith('LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT');
   });
 
 
@@ -771,7 +771,7 @@ describe("router tests", function () {
       }],
       owner.address,
       BigNumber.from('999999999999999999'),
-    )).revertedWith('ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+    )).revertedWith('LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT');
   });
 
   it("swapExactMATICForTokens IP test", async function () {
@@ -784,7 +784,7 @@ describe("router tests", function () {
       }],
       owner.address,
       BigNumber.from('999999999999999999'),
-    )).revertedWith('ConeRouter: INVALID_PATH');
+    )).revertedWith('LizardRouter: INVALID_PATH');
   });
 
   it("swapExactTokensForMATIC IOA test", async function () {
@@ -798,7 +798,7 @@ describe("router tests", function () {
       }],
       owner.address,
       BigNumber.from('999999999999999999'),
-    )).revertedWith('ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+    )).revertedWith('LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT');
   });
 
   it("swapExactTokensForMATIC IP test", async function () {
@@ -812,7 +812,7 @@ describe("router tests", function () {
       }],
       owner.address,
       BigNumber.from('999999999999999999'),
-    )).revertedWith('ConeRouter: INVALID_PATH');
+    )).revertedWith('LizardRouter: INVALID_PATH');
   });
 
   it("swapExactTokensForTokensSupportingFeeOnTransferTokens IOA test", async function () {
@@ -839,7 +839,7 @@ describe("router tests", function () {
       }],
       owner.address,
       BigNumber.from('999999999999999999'),
-    )).revertedWith('ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+    )).revertedWith('LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT');
   });
 
   it("swapExactMATICForTokensSupportingFeeOnTransferTokens IP test", async function () {
@@ -866,7 +866,7 @@ describe("router tests", function () {
       owner.address,
       BigNumber.from('999999999999999999'),
       {value: parseUnits('0.1')}
-    )).revertedWith('ConeRouter: INVALID_PATH');
+    )).revertedWith('LizardRouter: INVALID_PATH');
   });
 
   it("swapExactMATICForTokensSupportingFeeOnTransferTokens IOA test", async function () {
@@ -893,7 +893,7 @@ describe("router tests", function () {
       owner.address,
       BigNumber.from('999999999999999999'),
       {value: parseUnits('0.1')}
-    )).revertedWith('ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+    )).revertedWith('LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT');
   });
 
   it("swapExactTokensForMATICSupportingFeeOnTransferTokens IOA test", async function () {
@@ -920,7 +920,7 @@ describe("router tests", function () {
       }],
       owner.address,
       BigNumber.from('999999999999999999'),
-    )).revertedWith('ConeRouter: INSUFFICIENT_OUTPUT_AMOUNT');
+    )).revertedWith('LizardRouter: INSUFFICIENT_OUTPUT_AMOUNT');
   });
 
   it("swapExactTokensForMATICSupportingFeeOnTransferTokens IP test", async function () {
@@ -947,7 +947,7 @@ describe("router tests", function () {
       }],
       owner.address,
       BigNumber.from('999999999999999999'),
-    )).revertedWith('ConeRouter: INVALID_PATH');
+    )).revertedWith('LizardRouter: INVALID_PATH');
   });
 
   it("router with broken matic should revert", async function () {
@@ -997,7 +997,7 @@ describe("router tests", function () {
 
 async function check(
   owner: SignerWithAddress,
-  router: ConeRouter01,
+  router: LizardRouter01,
   tokenIn: Token,
   wmatic: Token,
   swapLib: SwapLibrary,

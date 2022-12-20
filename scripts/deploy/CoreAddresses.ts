@@ -1,10 +1,10 @@
 import {
   BribeFactory,
-  Cone,
-  ConeFactory,
-  ConeMinter,
-  ConeRouter01,
-  ConeVoter, Controller,
+  Lizard,
+  LizardFactory,
+  LizardMinter,
+  LizardRouter01,
+  LizardVoter, Controller,
   GaugeFactory,
   Ve,
   VeDist
@@ -12,19 +12,19 @@ import {
 
 export class CoreAddresses {
 
-  readonly token: Cone;
+  readonly token: Lizard;
   readonly gaugesFactory: GaugeFactory;
   readonly bribesFactory: BribeFactory;
-  readonly factory: ConeFactory;
-  readonly router: ConeRouter01;
+  readonly factory: LizardFactory;
+  readonly router: LizardRouter01;
   readonly ve: Ve;
   readonly veDist: VeDist;
-  readonly voter: ConeVoter;
-  readonly minter: ConeMinter;
+  readonly voter: LizardVoter;
+  readonly minter: LizardMinter;
   readonly controller: Controller;
 
 
-  constructor(token: Cone, gaugesFactory: GaugeFactory, bribesFactory: BribeFactory, factory: ConeFactory, router: ConeRouter01, ve: Ve, veDist: VeDist, voter: ConeVoter, minter: ConeMinter, controller: Controller) {
+  constructor(token: Lizard, gaugesFactory: GaugeFactory, bribesFactory: BribeFactory, factory: LizardFactory, router: LizardRouter01, ve: Ve, veDist: VeDist, voter: LizardVoter, minter: LizardMinter, controller: Controller) {
     this.token = token;
     this.gaugesFactory = gaugesFactory;
     this.bribesFactory = bribesFactory;

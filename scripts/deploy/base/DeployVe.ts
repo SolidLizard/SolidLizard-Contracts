@@ -5,7 +5,7 @@ import {Misc} from "../../Misc";
 import {writeFileSync} from "fs";
 import {formatUnits, parseUnits} from "ethers/lib/utils";
 import {BscAddresses} from '../../addresses/BscAddresses';
-import {ConeMinter__factory, ConeVoter__factory, IERC20__factory} from "../../../typechain";
+import {LizardMinter__factory, LizardVoter__factory, IERC20__factory} from "../../../typechain";
 import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/signers";
 import {TimeUtils} from "../../../test/TimeUtils";
 
@@ -73,7 +73,7 @@ async function main() {
     veDist,
     voter,
     minter,
-  ] = await Deploy.deployConeSystem(
+  ] = await Deploy.deployLizardSystem(
     signer,
     voterTokens,
     claimants,
@@ -124,9 +124,9 @@ main()
   });
 
 async function check(signer: SignerWithAddress, minter: string, token: string, veDist: string, voter: string) {
-  const minterCtr = ConeMinter__factory.connect(minter, signer);
+  const minterCtr = LizardMinter__factory.connect(minter, signer);
   const tokenCtr = IERC20__factory.connect(token, signer);
-  const voterCtr = ConeVoter__factory.connect(voter, signer);
+  const voterCtr = LizardVoter__factory.connect(voter, signer);
 
   console.log("govBal after deploy", formatUnits(await tokenCtr.balanceOf(signer.address)));
 

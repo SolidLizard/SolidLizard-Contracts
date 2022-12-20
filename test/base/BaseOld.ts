@@ -1,11 +1,11 @@
 /* tslint:disable:variable-name no-shadowed-variable ban-types no-var-requires no-any */
 import {
   Bribe,
-  Cone,
-  ConeFactory,
-  ConeMinter,
-  ConePair,
-  ConeRouter01,
+  Lizard,
+  LizardFactory,
+  LizardMinter,
+  LizardPair,
+  LizardRouter01,
   Controller,
   Gauge,
   GaugeFactory,
@@ -30,14 +30,14 @@ describe("base old tests", function () {
   let ust: Token;
   let mim: Token;
   let dai: Token;
-  let ve_underlying: Cone;
+  let ve_underlying: Lizard;
   let late_reward: Token;
   let ve: Ve;
-  let factory: ConeFactory;
-  let router: ConeRouter01;
-  let pair: ConePair;
-  let pair2: ConePair;
-  let pair3: ConePair;
+  let factory: LizardFactory;
+  let router: LizardRouter01;
+  let pair: LizardPair;
+  let pair2: LizardPair;
+  let pair3: LizardPair;
   let owner: SignerWithAddress;
   let voter: any;
   let gauge: Gauge;
@@ -46,7 +46,7 @@ describe("base old tests", function () {
   let bribe: Bribe;
   let bribe2: Bribe;
   let bribe3: Bribe;
-  let minter: ConeMinter;
+  let minter: LizardMinter;
   let ve_dist: VeDist;
   let staking: StakingRewards;
   let owner2: SignerWithAddress;
@@ -150,23 +150,23 @@ describe("base old tests", function () {
     expect(await mim.name()).to.equal("MIM");
   });
 
-  it("deploy ConeFactory and test pair length", async function () {
-    const ConeFactory = await ethers.getContractFactory("ConeFactory");
-    factory = await ConeFactory.deploy();
+  it("deploy LizardFactory and test pair length", async function () {
+    const LizardFactory = await ethers.getContractFactory("LizardFactory");
+    factory = await LizardFactory.deploy();
     await factory.deployed();
 
     expect(await factory.allPairsLength()).to.equal(0);
   });
 
-  it("deploy ConeRouter01 and test factory address", async function () {
-    const ConeRouter01 = await ethers.getContractFactory("ConeRouter01");
-    router = await ConeRouter01.deploy(factory.address, owner.address);
+  it("deploy LizardRouter01 and test factory address", async function () {
+    const LizardRouter01 = await ethers.getContractFactory("LizardRouter01");
+    router = await LizardRouter01.deploy(factory.address, owner.address);
     await router.deployed();
 
     expect(await router.factory()).to.equal(factory.address);
   });
 
-  it("deploy pair via ConeFactory owner", async function () {
+  it("deploy pair via LizardFactory owner", async function () {
     const ust_1 = ethers.BigNumber.from("1000000");
     const mim_1 = ethers.BigNumber.from("1000000000000000000");
     const dai_1 = ethers.BigNumber.from("1000000000000000000");
@@ -182,7 +182,7 @@ describe("base old tests", function () {
     expect(await factory.allPairsLength()).to.equal(3);
   });
 
-  it("deploy pair via ConeFactory owner2", async function () {
+  it("deploy pair via LizardFactory owner2", async function () {
     const ust_1 = ethers.BigNumber.from("1000000");
     const mim_1 = ethers.BigNumber.from("1000000000000000000");
     const dai_1 = ethers.BigNumber.from("1000000000000000000");
@@ -200,14 +200,14 @@ describe("base old tests", function () {
 
   it("confirm pair for mim-ust", async function () {
     const create2address = await router.pairFor(mim.address, ust.address, true);
-    const ConePair = await ethers.getContractFactory("ConePair");
+    const LizardPair = await ethers.getContractFactory("LizardPair");
     const address = await factory.getPair(mim.address, ust.address, true);
     const allpairs0 = await factory.allPairs(0);
-    pair = await ConePair.attach(address);
+    pair = await LizardPair.attach(address);
     const address2 = await factory.getPair(mim.address, ust.address, false);
-    pair2 = await ConePair.attach(address2);
+    pair2 = await LizardPair.attach(address2);
     const address3 = await factory.getPair(mim.address, dai.address, true);
-    pair3 = await ConePair.attach(address3);
+    pair3 = await LizardPair.attach(address3);
 
     expect(pair.address).to.equal(create2address);
   });
@@ -241,7 +241,7 @@ describe("base old tests", function () {
     expect(await pair.connect(owner2).getAmountOut(ust_1, ust.address)).to.equal(ethers.BigNumber.from("992220948146798746"));
   });
 
-  it("ConeRouter01 addLiquidity", async function () {
+  it("LizardRouter01 addLiquidity", async function () {
     const ust_1000 = ethers.BigNumber.from("100000000000");
     const mim_1000 = ethers.BigNumber.from("100000000000000000000000");
     const mim_100000000 = ethers.BigNumber.from("100000000000000000000000000");
@@ -259,7 +259,7 @@ describe("base old tests", function () {
     await router.addLiquidity(mim.address, dai.address, true, mim_100000000, dai_100000000, 0, 0, owner.address, Date.now());
   });
 
-  it("ConeRouter01 removeLiquidity", async function () {
+  it("LizardRouter01 removeLiquidity", async function () {
     const ust_1000 = ethers.BigNumber.from("100000000000");
     const mim_1000 = ethers.BigNumber.from("100000000000000000000000");
     const mim_100000000 = ethers.BigNumber.from("100000000000000000000000000");
@@ -271,7 +271,7 @@ describe("base old tests", function () {
     const output = await router.quoteRemoveLiquidity(mim.address, ust.address, true, ust_1000);
   });
 
-  it("ConeRouter01 addLiquidity owner2", async function () {
+  it("LizardRouter01 addLiquidity owner2", async function () {
     const ust_1000 = ethers.BigNumber.from("100000000000");
     const mim_1000 = ethers.BigNumber.from("100000000000000000000000");
     const mim_100000000 = ethers.BigNumber.from("100000000000000000000000000");
@@ -288,7 +288,7 @@ describe("base old tests", function () {
     await router.connect(owner2).addLiquidity(mim.address, dai.address, true, mim_100000000, dai_100000000, 0, 0, owner.address, Date.now());
   });
 
-  it("ConeRouter01 pair1 getAmountsOut & swapExactTokensForTokens", async function () {
+  it("LizardRouter01 pair1 getAmountsOut & swapExactTokensForTokens", async function () {
     const ust_1 = ethers.BigNumber.from("1000000");
     const route = {from: ust.address, to: mim.address, stable: true}
 
@@ -306,7 +306,7 @@ describe("base old tests", function () {
     expect(await ust.balanceOf(owner.address)).to.be.above(b);
   });
 
-  it("ConeRouter01 pair1 getAmountsOut & swapExactTokensForTokens owner2", async function () {
+  it("LizardRouter01 pair1 getAmountsOut & swapExactTokensForTokens owner2", async function () {
     const ust_1 = ethers.BigNumber.from("1000000");
     const route = {from: ust.address, to: mim.address, stable: true}
 
@@ -324,7 +324,7 @@ describe("base old tests", function () {
     expect(await ust.balanceOf(owner.address)).to.be.equal(b);
   });
 
-  it("ConeRouter01 pair2 getAmountsOut & swapExactTokensForTokens", async function () {
+  it("LizardRouter01 pair2 getAmountsOut & swapExactTokensForTokens", async function () {
     const ust_1 = ethers.BigNumber.from("1000000");
     const route = {from: ust.address, to: mim.address, stable: false}
 
@@ -337,7 +337,7 @@ describe("base old tests", function () {
     await router.swapExactTokensForTokens(ust_1, expected_output[1], [route], owner.address, Date.now());
   });
 
-  it("ConeRouter01 pair3 getAmountsOut & swapExactTokensForTokens", async function () {
+  it("LizardRouter01 pair3 getAmountsOut & swapExactTokensForTokens", async function () {
     const mim_1000000 = ethers.BigNumber.from("1000000000000000000000000");
     const route = {from: mim.address, to: dai.address, stable: true}
 
@@ -350,15 +350,15 @@ describe("base old tests", function () {
     await router.swapExactTokensForTokens(mim_1000000, expected_output[1], [route], owner.address, Date.now());
   });
 
-  it("deploy ConeVoter", async function () {
+  it("deploy LizardVoter", async function () {
     const GaugeFactory = await ethers.getContractFactory("GaugeFactory");
     gauges_factory = await GaugeFactory.deploy();
     await gauges_factory.deployed();
     const BribeFactory = await ethers.getContractFactory("BribeFactory");
     const bribe_factory = await BribeFactory.deploy();
     await bribe_factory.deployed();
-    const ConeVoter = await ethers.getContractFactory("ConeVoter");
-    voter = await ConeVoter.deploy(ve.address, factory.address, gauges_factory.address, bribe_factory.address);
+    const LizardVoter = await ethers.getContractFactory("LizardVoter");
+    voter = await LizardVoter.deploy(ve.address, factory.address, gauges_factory.address, bribe_factory.address);
     await voter.deployed();
 
     expect(await voter.poolsLength()).to.equal(0);
@@ -369,7 +369,7 @@ describe("base old tests", function () {
     ve_dist = await VeDist.deploy(ve.address);
     await ve_dist.deployed();
 
-    const Minter = await ethers.getContractFactory("ConeMinter");
+    const Minter = await ethers.getContractFactory("LizardMinter");
     minter = await Minter.deploy(ve.address, controller.address);
     await minter.deployed();
     await ve_dist.setDepositor(minter.address);
@@ -378,7 +378,7 @@ describe("base old tests", function () {
     await voter.initialize([ust.address, mim.address, dai.address, ve_underlying.address], minter.address);
   });
 
-  it("deploy ConeFactory gauge", async function () {
+  it("deploy LizardFactory gauge", async function () {
     const pair_1000 = ethers.BigNumber.from("1000000000");
 
     await ve_underlying.approve(voter.address, ethers.BigNumber.from("1500000000000000000000000"));
@@ -440,7 +440,7 @@ describe("base old tests", function () {
   });
 
 
-  it("deploy ConeFactory gauge owner2", async function () {
+  it("deploy LizardFactory gauge owner2", async function () {
     const pair_1000 = ethers.BigNumber.from("1000000000");
     const pair_3000 = ethers.BigNumber.from("3000000000");
 
@@ -579,7 +579,7 @@ describe("base old tests", function () {
     await bribe.getReward(1, [ve_underlying.address]);
   });
 
-  it("ConeRouter01 pair1 getAmountsOut & swapExactTokensForTokens", async function () {
+  it("LizardRouter01 pair1 getAmountsOut & swapExactTokensForTokens", async function () {
     const ust_1 = ethers.BigNumber.from("1000000");
     const route = {from: ust.address, to: mim.address, stable: true}
 
@@ -591,7 +591,7 @@ describe("base old tests", function () {
     const fees = await pair.fees()
   });
 
-  it("ConeRouter01 pair2 getAmountsOut & swapExactTokensForTokens", async function () {
+  it("LizardRouter01 pair2 getAmountsOut & swapExactTokensForTokens", async function () {
     const ust_1 = ethers.BigNumber.from("1000000");
     const route = {from: ust.address, to: mim.address, stable: false}
 
@@ -603,7 +603,7 @@ describe("base old tests", function () {
     const fees = await pair2.fees()
   });
 
-  it("ConeRouter01 pair1 getAmountsOut & swapExactTokensForTokens", async function () {
+  it("LizardRouter01 pair1 getAmountsOut & swapExactTokensForTokens", async function () {
     const mim_1 = ethers.BigNumber.from("1000000000000000000");
     const route = {from: mim.address, to: ust.address, stable: true}
 
@@ -615,7 +615,7 @@ describe("base old tests", function () {
     const fees = await pair.fees()
   });
 
-  it("ConeRouter01 pair2 getAmountsOut & swapExactTokensForTokens", async function () {
+  it("LizardRouter01 pair2 getAmountsOut & swapExactTokensForTokens", async function () {
     const mim_1 = ethers.BigNumber.from("1000000000000000000");
     const route = {from: mim.address, to: ust.address, stable: false}
 
@@ -625,7 +625,7 @@ describe("base old tests", function () {
     await router.swapExactTokensForTokens(mim_1, expected_output[1], [route], owner.address, Date.now());
   });
 
-  it("ConeRouter01 pair1>pair2 getAmountsOut & swapExactTokensForTokens", async function () {
+  it("LizardRouter01 pair1>pair2 getAmountsOut & swapExactTokensForTokens", async function () {
     const mim_1 = ethers.BigNumber.from("1000000000000000000");
     const route = [{from: mim.address, to: ust.address, stable: false}, {
       from: ust.address,
@@ -772,7 +772,7 @@ describe("base old tests", function () {
     await ve.withdraw(1);
   });
 
-  it("ConeRouter01 addLiquidity owner3", async function () {
+  it("LizardRouter01 addLiquidity owner3", async function () {
     const ust_1000 = ethers.BigNumber.from("1000000000000");
     const mim_1000 = ethers.BigNumber.from("1000000000000000000000000");
     const mim_100000000 = ethers.BigNumber.from("100000000000000000000000000");
@@ -783,7 +783,7 @@ describe("base old tests", function () {
     await router.connect(owner3).addLiquidity(mim.address, ust.address, true, mim_1000, ust_1000, 0, 0, owner3.address, Date.now());
   });
 
-  it("deploy ConeFactory gauge owner3", async function () {
+  it("deploy LizardFactory gauge owner3", async function () {
     const pair_1000 = ethers.BigNumber.from("1000000000");
     const pair_2000 = ethers.BigNumber.from("2000000000");
 

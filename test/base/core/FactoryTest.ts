@@ -1,4 +1,4 @@
-import {ConeFactory, ConePair__factory, Token} from "../../../typechain";
+import {LizardFactory, LizardPair__factory, Token} from "../../../typechain";
 import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/signers";
 import {ethers} from "hardhat";
 import chai from "chai";
@@ -15,7 +15,7 @@ describe("factory tests", function () {
 
   let owner: SignerWithAddress;
   let owner2: SignerWithAddress;
-  let factory: ConeFactory;
+  let factory: LizardFactory;
   let wmatic: Token;
   let usdc: Token;
 
@@ -25,7 +25,7 @@ describe("factory tests", function () {
     [owner, owner2] = await ethers.getSigners();
     wmatic = await Deploy.deployContract(owner, 'Token', 'WMATIC', 'WMATIC', 18, owner.address) as Token;
     usdc = await Deploy.deployContract(owner, 'Token', 'USDC', 'USDC', 6, owner.address) as Token;
-    factory = await Deploy.deployConeFactory(owner);
+    factory = await Deploy.deployLizardFactory(owner);
   });
 
   after(async function () {
@@ -74,14 +74,14 @@ describe("factory tests", function () {
   });
 
   it("set fees revert ", async function () {
-    await expect(factory.connect(owner2).setSwapFee(wmatic.address, 1)).revertedWith("ConeFactory: Not pauser");
+    await expect(factory.connect(owner2).setSwapFee(wmatic.address, 1)).revertedWith("LizardFactory: Not pauser");
   });
 
   it("check created pair variables", async function () {
     await factory.createPair(wmatic.address, usdc.address, true);
     await expect(factory.createPair(wmatic.address, usdc.address, true)).revertedWith('PAIR_EXISTS');
     const pairAdr = await factory.getPair(wmatic.address, usdc.address, true);
-    const pair = ConePair__factory.connect(pairAdr, owner);
+    const pair = LizardPair__factory.connect(pairAdr, owner);
     expect(await pair.factory()).eq(factory.address);
     expect(await pair.fees()).not.eq(Misc.ZERO_ADDRESS);
     expect(await pair.stable()).eq(true);

@@ -18,7 +18,7 @@ library VeLogo {
     output = string(abi.encodePacked(output, '<text transform="matrix(1 0 0 1 88 694)" class="f s">Until unlock:</text><text transform="matrix(1 0 0 1 88 733)" class="w s">', _toString(untilEnd / 60 / 60 / 24), ' days</text>'));
     output = string(abi.encodePacked(output, '<text transform="matrix(1 0 0 1 88 804)" class="f s">Power:</text><text transform="matrix(1 0 0 1 88 843)" class="w s">', _toString(_value / 1e18), '</text></svg>'));
 
-    string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "veCONE #', _toString(_tokenId), '", "description": "Locked CONE tokens", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '"}'))));
+    string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "veLIZARD #', _toString(_tokenId), '", "description": "Locked LIZARD tokens", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '"}'))));
     output = string(abi.encodePacked('data:application/json;base64,', json));
   }
 

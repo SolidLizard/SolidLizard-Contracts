@@ -1,8 +1,8 @@
 import {ethers} from "hardhat";
 import {
-  ConeFactory__factory, ConeMinter, ConeMinter__factory,
-  ConeRouter01__factory,
-  ConeVoter, ConeVoter__factory,
+  LizardFactory__factory, LizardMinter, LizardMinter__factory,
+  LizardRouter01__factory,
+  LizardVoter, LizardVoter__factory,
   IFactory__factory,
   IRouter__factory, IWMATIC, IWMATIC__factory,
   Token__factory
@@ -31,10 +31,10 @@ async function main() {
   const usdt = BscTestnetAddresses.USDT_TOKEN;
   const mai = BscTestnetAddresses.MAI_TOKEN;
 
-  const router = ConeRouter01__factory.connect(routerAdr, signer);
-  const factory = ConeFactory__factory.connect(factoryAdr, signer);
-  const voter = ConeVoter__factory.connect(voterAdr, signer);
-  const minter = ConeMinter__factory.connect(minterAdr, signer);
+  const router = LizardRouter01__factory.connect(routerAdr, signer);
+  const factory = LizardFactory__factory.connect(factoryAdr, signer);
+  const voter = LizardVoter__factory.connect(voterAdr, signer);
+  const minter = LizardMinter__factory.connect(minterAdr, signer);
 
   // *** MINT tokens
   console.log("start mint tokens")

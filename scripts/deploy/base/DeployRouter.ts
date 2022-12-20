@@ -9,7 +9,7 @@ async function main() {
 
   const FACTORY = '';
 
-  const router = await Deploy.deployConeRouter01(signer, FACTORY, BscAddresses.WBNB_TOKEN);
+  const router = await Deploy.deployLizardRouter01(signer, FACTORY, BscAddresses.WBNB_TOKEN);
 
   await Misc.wait(5);
   await Verify.verifyWithArgs(router.address, [FACTORY, BscAddresses.WBNB_TOKEN]);
