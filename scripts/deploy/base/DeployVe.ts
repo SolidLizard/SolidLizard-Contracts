@@ -4,35 +4,34 @@ import {Verify} from "../../Verify";
 import {Misc} from "../../Misc";
 import {writeFileSync} from "fs";
 import {formatUnits, parseUnits} from "ethers/lib/utils";
-import {BscAddresses} from '../../addresses/BscAddresses';
+import {ArbitrumAddresses} from '../../addresses/ArbitrumAddresses';
 import {LizardMinter__factory, LizardVoter__factory, IERC20__factory} from "../../../typechain";
 import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/signers";
 import {TimeUtils} from "../../../test/TimeUtils";
 
 
 const voterTokens = [
-  BscAddresses.WBNB_TOKEN,
-  BscAddresses.WETH_TOKEN,
-  BscAddresses.USDC_TOKEN,
-  BscAddresses.FRAX_TOKEN,
-  BscAddresses.DAI_TOKEN,
-  BscAddresses.USDT_TOKEN,
-  BscAddresses.MAI_TOKEN,
-  BscAddresses.BUSD_TOKEN,
+  ArbitrumAddresses.WETH_TOKEN,
+  ArbitrumAddresses.USDC_TOKEN,
+  ArbitrumAddresses.FRAX_TOKEN,
+  ArbitrumAddresses.DAI_TOKEN,
+  ArbitrumAddresses.USDT_TOKEN,
+  ArbitrumAddresses.WBTC_TOKEN
+
 ];
 
 const claimants = [
-  BscAddresses.GOVERNANCE, // for Governance
-  BscAddresses.GOVERNANCE, // for Sphere
-  BscAddresses.GOVERNANCE, // for Usd+
-  BscAddresses.GOVERNANCE, // for Qi-dao
-  BscAddresses.GOVERNANCE, // for Beefy
-  BscAddresses.GOVERNANCE, // for Valas
-  BscAddresses.GOVERNANCE, // for DotDot
-  BscAddresses.GOVERNANCE, // for TUSD
-  BscAddresses.GOVERNANCE, // for Stader
-  BscAddresses.GOVERNANCE, // for reserve1
-  BscAddresses.GOVERNANCE, // for reserve2
+  ArbitrumAddresses.GOVERNANCE, // for Governance
+  ArbitrumAddresses.GOVERNANCE, // for Sphere
+  ArbitrumAddresses.GOVERNANCE, // for Usd+
+  ArbitrumAddresses.GOVERNANCE, // for Qi-dao
+  ArbitrumAddresses.GOVERNANCE, // for Beefy
+  ArbitrumAddresses.GOVERNANCE, // for Valas
+  ArbitrumAddresses.GOVERNANCE, // for DotDot
+  ArbitrumAddresses.GOVERNANCE, // for TUSD
+  ArbitrumAddresses.GOVERNANCE, // for Stader
+  ArbitrumAddresses.GOVERNANCE, // for reserve1
+  ArbitrumAddresses.GOVERNANCE, // for reserve2
 ];
 
 const claimantsAmounts = [
@@ -49,7 +48,7 @@ const claimantsAmounts = [
   parseUnits("500000"), // reserve2
 ];
 
-const FACTORY = '0x0EFc2D2D054383462F2cD72eA2526Ef7687E1016';
+const FACTORY = ''; //todo fill
 
 // ! choose wisely
 const WARMING_UP = 1;
@@ -57,7 +56,7 @@ const WARMING_UP = 1;
 async function main() {
   let signer;
   if (hre.network.name === "hardhat") {
-    signer = await Misc.impersonate(BscAddresses.GOVERNANCE);
+    signer = await Misc.impersonate(ArbitrumAddresses.GOVERNANCE);
   } else {
     signer = (await ethers.getSigners())[0];
   }

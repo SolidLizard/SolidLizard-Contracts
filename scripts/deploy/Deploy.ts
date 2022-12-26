@@ -15,7 +15,8 @@ import {
   GaugeFactory,
   Token,
   Ve,
-  VeDist
+  VeDist, 
+  GovernanceTreasury
 } from "../../typechain";
 import {Misc} from "../Misc";
 import {CoreAddresses} from "./CoreAddresses";
@@ -86,8 +87,12 @@ export class Deploy {
     return (await Deploy.deployContract(signer, 'BribeFactory')) as BribeFactory;
   }
 
-  public static async deployLizardFactory(signer: SignerWithAddress) {
-    return (await Deploy.deployContract(signer, 'LizardFactory')) as LizardFactory;
+  public static async deployLizardFactory(signer: SignerWithAddress, treasury: string) {
+    return (await Deploy.deployContract(signer, 'LizardFactory', treasury)) as LizardFactory;
+  }
+
+  public static async deployGovernanceTreasury(signer: SignerWithAddress) {
+    return (await Deploy.deployContract(signer, 'GovernanceTreasury')) as GovernanceTreasury;
   }
 
   public static async deployLizardRouter01(
@@ -145,7 +150,7 @@ export class Deploy {
     minterSum: BigNumber,
     warmingUpPeriod = 2
   ) {
-    const [baseFactory, router] = await Deploy.deployDex(signer, networkToken);
+    const [baseFactory, router, treasury] = await Deploy.deployDex(signer, networkToken);
 
     const [
       controller,
@@ -177,6 +182,7 @@ export class Deploy {
       voter as LizardVoter,
       minter as LizardMinter,
       controller as Controller,
+      treasury as GovernanceTreasury
     );
   }
 
@@ -185,10 +191,11 @@ export class Deploy {
     signer: SignerWithAddress,
     networkToken: string,
   ) {
-    const baseFactory = await Deploy.deployLizardFactory(signer);
+    const treasury = await Deploy.deployGovernanceTreasury(signer);
+    const baseFactory = await Deploy.deployLizardFactory(signer, treasury.address);
     const router = await Deploy.deployLizardRouter01(signer, baseFactory.address, networkToken);
 
-    return [baseFactory, router];
+    return [baseFactory, router, treasury];
   }
 
   public static async deployLizardSystem(

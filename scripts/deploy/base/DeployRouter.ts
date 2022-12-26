@@ -2,17 +2,17 @@ import {Deploy} from "../Deploy";
 import {ethers} from "hardhat";
 import {Verify} from "../../Verify";
 import {Misc} from "../../Misc";
-import {BscAddresses} from '../../addresses/BscAddresses';
+import {ArbitrumAddresses} from '../../addresses/ArbitrumAddresses';
 
 async function main() {
   const signer = (await ethers.getSigners())[0];
 
   const FACTORY = '';
 
-  const router = await Deploy.deployLizardRouter01(signer, FACTORY, BscAddresses.WBNB_TOKEN);
+  const router = await Deploy.deployLizardRouter01(signer, FACTORY, ArbitrumAddresses.WETH_TOKEN);
 
   await Misc.wait(5);
-  await Verify.verifyWithArgs(router.address, [FACTORY, BscAddresses.WBNB_TOKEN]);
+  await Verify.verifyWithArgs(router.address, [FACTORY, ArbitrumAddresses.WETH_TOKEN]);
 
 }
 
