@@ -159,41 +159,18 @@ function distribute(address token) external
 |:-----|:--------|:----|
 | TBD   | TBD     | TBD |
 
-### Testnet deployment
 
-| Name       | Address                                                                                                                           |
-|:-----------|:----------------------------------------------------------------------------------------------------------------------------------|
-| wBNB       | [0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd](https://testnet.bscscan.com/address/0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd#code) |
-| USDC_TOKEN | [0x88a12B7b6525c0B46c0c200405f49cE0E72D71Aa](https://testnet.bscscan.com/address/0x88a12B7b6525c0B46c0c200405f49cE0E72D71Aa#code) |
-| MIM_TOKEN  | [0x549aE613Bb492CCf68A6620848C80262709a1fb4](https://testnet.bscscan.com/address/0x549aE613Bb492CCf68A6620848C80262709a1fb4#code) |
-| DAI_TOKEN  | [0xf31d85CA2811B482f783860aacE022cf837dF7fE](https://testnet.bscscan.com/address/0xf31d85CA2811B482f783860aacE022cf837dF7fE#code) |
-| USDT_TOKEN | [0x0EFc2D2D054383462F2cD72eA2526Ef7687E1016](https://testnet.bscscan.com/address/0x0EFc2D2D054383462F2cD72eA2526Ef7687E1016#code) |
-| MAI_TOKEN  | [0xbf1fc29668e5f5Eaa819948599c9Ac1B1E03E75F](https://testnet.bscscan.com/address/0xbf1fc29668e5f5Eaa819948599c9Ac1B1E03E75F#code) |
-
-| Name                 | Address                                                                                                                            |
-|:---------------------|:-----------------------------------------------------------------------------------------------------------------------------------|
-| LizardFactory          | [0x422282F18CFE573e7dc6BEcC7242ffad43340aF8](https://testnet.bscscan.com/address/0x422282F18CFE573e7dc6BEcC7242ffad43340aF8#code)  |
-| LizardRouter01         | [0x13d862a01d0AB241509A2e47e31d0db04e9b9F49](https://testnet.bscscan.com/address/0x13d862a01d0AB241509A2e47e31d0db04e9b9F49#code)  |
-| BribeFactory         | [0xD8a4054d63fCb0030BC73E2323344Ae59A19E92b](https://testnet.bscscan.com/address/0xD8a4054d63fCb0030BC73E2323344Ae59A19E92b#code)  |
-| GaugesFactory        | [0xC363F3D4e1C005bf5321040653A088F71Bb974Ab](https://testnet.bscscan.com/address/0xC363F3D4e1C005bf5321040653A088F71Bb974Ab#code)  |
-| LIZARD                 | [0x875976AeF383Fe4135B93C3989671056c4dEcDFF](https://testnet.bscscan.com/address/0x875976AeF383Fe4135B93C3989671056c4dEcDFF#code)  |
-| LizardMinter           | [0x0C6868831c504Fb0bB61A54FEfC6464804380508](https://testnet.bscscan.com/address/0x0C6868831c504Fb0bB61A54FEfC6464804380508#code)  |
-| LizardVoter            | [0xC9d5917A0cb82450Cd687AF31eCAaC967D7F121C](https://testnet.bscscan.com/address/0xC9d5917A0cb82450Cd687AF31eCAaC967D7F121C#code)  |
-| veLIZARD               | [0xbEB411eAD71713E7f2814326498Ff2a054242206](https://testnet.bscscan.com/address/0xbEB411eAD71713E7f2814326498Ff2a054242206#code)  |
-| VeDist               | [0xa4EB2E1284D9E30fb656Fe6b34c1680Ef5d4cBFC](https://testnet.bscscan.com/address/0xa4EB2E1284D9E30fb656Fe6b34c1680Ef5d4cBFC#code)  |
-| Controller           | [0x6ce857d3037e87465b003aCbA264DDF2Cec6D5E4](https://testnet.bscscan.com/address/0x6ce857d3037e87465b003aCbA264DDF2Cec6D5E4#code)  |
-
-### BSC deployment
+### Arbitrum deployment
 
 | Name                 | Address                                                                                                                   |
 |:---------------------|:--------------------------------------------------------------------------------------------------------------------------|
-| LizardFactory          | [0x0EFc2D2D054383462F2cD72eA2526Ef7687E1016](https://bscscan.com/address/0x0EFc2D2D054383462F2cD72eA2526Ef7687E1016#code) |
-| LizardRouter01         | [0xbf1fc29668e5f5Eaa819948599c9Ac1B1E03E75F](https://bscscan.com/address/0xbf1fc29668e5f5Eaa819948599c9Ac1B1E03E75F#code) |
-| BribeFactory         | [0xFE700D523094Cc6C673d78F1446AE0743C89586E](https://bscscan.com/address/0xFE700D523094Cc6C673d78F1446AE0743C89586E#code) |
-| GaugesFactory        | [0xeE7FFE79689B3d826C7389B95780F42849Fb7019](https://bscscan.com/address/0xeE7FFE79689B3d826C7389B95780F42849Fb7019#code) |
-| LIZARD                 | [0xA60205802E1B5C6EC1CAFA3cAcd49dFeECe05AC9](https://bscscan.com/address/0xA60205802E1B5C6EC1CAFA3cAcd49dFeECe05AC9#code) |
-| LizardMinter           | [0x308A756B4f9aa3148CaD7ccf8e72c18C758b2EF2](https://bscscan.com/address/0x308A756B4f9aa3148CaD7ccf8e72c18C758b2EF2#code) |
-| LizardVoter            | [0xC3B5d80E4c094B17603Ea8Bb15d2D31ff5954aAE](https://bscscan.com/address/0xC3B5d80E4c094B17603Ea8Bb15d2D31ff5954aAE#code) |
-| veLIZARD               | [0xd0C1378c177E961D96c06b0E8F6E7841476C81Ef](https://bscscan.com/address/0xd0C1378c177E961D96c06b0E8F6E7841476C81Ef#code) |
-| VeDist               | [0xdfB765935D7f4e38641457c431F89d20Db571674](https://bscscan.com/address/0xdfB765935D7f4e38641457c431F89d20Db571674#code) |
-| Controller           | [0x2d91C960b03F2C39604aE1b644ba508a1366057c](https://bscscan.com/address/0x2d91C960b03F2C39604aE1b644ba508a1366057c#code) |
+| LizardFactory          | [0x0EFc2D2D054383462F2cD72eA2526Ef7687E1016](https://arbiscan.io/address/0x734d84631f00dC0d3FCD18b04b6cf42BFd407074#code) |
+| LizardRouter01         | [0xF26515D5482e2C2FD237149bF6A653dA4794b3D0](https://arbiscan.io/address/0xF26515D5482e2C2FD237149bF6A653dA4794b3D0#code) |
+| BribeFactory         | [0x6855D50f7dc1A3b08B8cf55d09F6DbeA0ce3304F](https://arbiscan.io/address/0x6855D50f7dc1A3b08B8cf55d09F6DbeA0ce3304F#code) |
+| GaugesFactory        | [0x330b0AaC13E389313e48f9B70E4d1531C71A5094](https://arbiscan.io/address/0x330b0AaC13E389313e48f9B70E4d1531C71A5094#code) |
+| SLIZ                 | [0x463913D3a3D3D291667D53B8325c598Eb88D3B0e](https://arbiscan.io/address/0x463913D3a3D3D291667D53B8325c598Eb88D3B0e#code) |
+| LizardMinter           | [0x4d24e9cc5A8c848f3F8BFA14Ebb8a7607105Ec3C](https://arbiscan.io/address/0x4d24e9cc5A8c848f3F8BFA14Ebb8a7607105Ec3C#code) |
+| LizardVoter            | [0x98A1De08715800801E9764349F5A71cBe63F99cc](https://arbiscan.io/address/0x98A1De08715800801E9764349F5A71cBe63F99cc#code) |
+| veSLIZ               | [0x29d3622c78615A1E7459e4bE434d816b7de293e4](https://arbiscan.io/address/0x29d3622c78615A1E7459e4bE434d816b7de293e4#code) |
+| VeDist               | [0xBfa51D9635FA9BE5117093EfeFf06d388D539b86](https://arbiscan.io/address/0xBfa51D9635FA9BE5117093EfeFf06d388D539b86#code) |
+| Controller           | [0x23C7170FD3fEc8ef421EBA8F69b8E72Dd86Ac713](https://arbiscan.io/address/0x23C7170FD3fEc8ef421EBA8F69b8E72Dd86Ac713#code) |

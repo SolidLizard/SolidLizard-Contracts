@@ -18,7 +18,7 @@ contract Lizard is IERC20 {
 
   constructor() {
     minter = msg.sender;
-    _mint(msg.sender, 0);
+    _mint(msg.sender, 5000000000000000000000000); //5M tokens for initial liquidity
   }
 
   // No checks as its meant to be once off to set minting rights to Minter

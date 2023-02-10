@@ -22,7 +22,7 @@ contract LizardMinter is IMinter {
   uint internal constant _LOCK_PERIOD = 86400 * 7 * 52 * 4;
 
   /// @dev Decrease base weekly emission by 2%
-  uint internal constant _WEEKLY_EMISSION_DECREASE = 98;
+  uint internal constant _WEEKLY_EMISSION_DECREASE = 97;
   uint internal constant _WEEKLY_EMISSION_DECREASE_DENOMINATOR = 100;
 
 
@@ -45,7 +45,7 @@ contract LizardMinter is IMinter {
 
   /// @dev The core parameter for determinate the whole emission dynamic.
   ///       Will be decreased every week.
-  uint internal constant _START_BASE_WEEKLY_EMISSION = 20_000_000e18;
+  uint internal constant _START_BASE_WEEKLY_EMISSION = 15_000_000e18;
   /// @dev 5% goes to governance to maintain the platform.
   uint internal constant _GOVERNANCE_ALLOC = 20;
 
