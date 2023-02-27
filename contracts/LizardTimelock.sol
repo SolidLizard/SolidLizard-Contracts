@@ -34,7 +34,6 @@ contract LizardTimelock {
     address public admin;
     address public pendingAdmin;
     uint public delay;
-    bool public admin_initialized;
     address public owner;
     address public pendingOwner;
 
@@ -50,7 +49,6 @@ contract LizardTimelock {
         admin = admin_;
         delay = delay_;
         owner = owner_;
-        admin_initialized = false;
     }
 
     // XXX: function() external payable { }
@@ -96,13 +94,7 @@ contract LizardTimelock {
     }
 
     function setPendingAdmin(address pendingAdmin_) public {
-        // allows one time setting of admin for deployment purposes
-        if (admin_initialized) {
-            require(msg.sender == address(this), "Timelock::setPendingAdmin: Call must come from Timelock.");
-        } else {
-            require(msg.sender == admin, "Timelock::setPendingAdmin: First call must come from admin.");
-            admin_initialized = true;
-        }
+        require(msg.sender == admin, "Timelock::setPendingAdmin: First call must come from admin.");
         pendingAdmin = pendingAdmin_;
 
         emit NewPendingAdmin(pendingAdmin);
